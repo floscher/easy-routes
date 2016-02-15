@@ -1,0 +1,155 @@
+apply plugin: 'eclipse'
+apply plugin: 'findbugs'
+apply plugin: 'jacoco'
+apply plugin: 'java'
+apply plugin: 'pmd'
+apply plugin: 'project-report'
+
+sourceCompatibility = '1.7'
+
+repositories {
+  // for JUnit and JSON simple
+  mavenCentral()
+  //for josm-(latest|tested).jar
+  ivy {
+    url 'https://josm.openstreetmap.de/download'
+    layout 'pattern', {
+      artifact "[artifact]-[revision].jar"
+      artifact "[artifact]-snapshot-[revision].jar"
+      artifact "Archiv/[artifact]-snapshot-[revision].jar"
+    }
+  }
+}
+dependencies {
+  // The JOSM-version can be specified as "latest", "tested" or the numeric version number.
+  // When using a numeric version number you can leave out {changing=true}.
+  compile(':josm:8904')
+  compile 'com.googlecode.json-simple:json-simple:1.1.1'
+
+  testCompile 'junit:junit:4.12'
+}
+
+sourceSets {
+  main {
+    java {
+      srcDirs = ['src']
+    }
+    resources {
+      srcDirs = ["$projectDir"]
+      include 'data/**'
+      include 'images/**'
+      include 'README'
+      include 'GPL-v*.txt'
+    }
+  }
+  test {
+    java {
+      srcDirs = ['test/unit']
+    }
+    resources{
+      srcDirs = ['test/data']
+    }
+  }
+}
+
+eclipse {
+  project {
+    name = 'JOSM-easy-routes'
+    comment = property('plugin.description')
+    natures 'ch.acanda.eclipse.pmd.builder.PMDNature'
+    buildCommand 'ch.acanda.eclipse.pmd.builder.PMDBuilder'
+  }
+}
+eclipseClasspath.dependsOn cleanEclipseClasspath
+eclipseProject.dependsOn cleanEclipseProject
+tasks.eclipse.dependsOn = ['eclipseClasspath', 'eclipseProject']
+
+pmd {
+  toolVersion '5.4.1'
+  ignoreFailures true
+  targetJdk sourceCompatibility
+  //ruleSetFiles = files('.settings/pmd-ruleset.xml')
+}
+
+build.dependsOn jacocoTestReport
+build.dependsOn projectReport
+
+tasks.withType(Javadoc) {
+  failOnError false
+}
+
+/** FindBugs configuration */
+findbugs {
+  toolVersion = "3.0.1"
+  ignoreFailures = true
+  effort = "max"
+  reportLevel = "low"
+}
+tasks.withType(FindBugs) {
+  reports {
+    xml.enabled = false
+    html.enabled = true
+  }
+}
+
+/** JaCoCo configuration */
+jacoco {
+  toolVersion = "0.7.5.201505241946"
+}
+jacocoTestReport {
+  reports {
+    xml.enabled true
+    html.destination "$buildDir/reports/jacoco"
+  }
+}
+
+test {
+  testLogging {
+    exceptionFormat "full"
+    events "started", "passed", "skipped", "failed", "standardOut", "standardError"
+  }
+}
+
+jar {
+  manifest {
+    attributes(
+      "Gradle-Version": project.getGradle().getGradleVersion(),
+      "Created-By": System.getProperty("java.version")+" ("+System.getProperty("java.vendor")+")",
+      "Plugin-Mainversion": project.property('plugin.main.version'),
+      "Plugin-Class": project.property('plugin.class'),
+      "Plugin-Description": project.property('plugin.description'),
+      "Plugin-Date": String.format("%1\$tY-%1\$tm-%1\$tdT%1\$tH:%1\$tM:%1\$tS%1\$tz", new GregorianCalendar()),
+      "Author": project.property('plugin.author')
+    )
+  }
+}
+
+task activatePlugin(type: Copy) {
+  from "gradle/josm-preferences.xml"
+  into "$buildDir/.josm"
+  rename 'josm-preferences.xml', 'preferences.xml'
+}
+
+task installPlugin(type: Copy) {
+ from "$buildDir/libs/${project.name}.jar"
+ from configurations.runtime
+ into "$buildDir/.josm/plugins"
+ include 'apache*.jar'
+ include "${project.name}.jar"
+ rename "${project.name}.jar", 'Mapillary.jar'
+ rename 'apache-(.*)-.*.jar', 'apache-$1.jar'
+}
+installPlugin.dependsOn jar
+installPlugin.dependsOn activatePlugin
+
+/**
+ * This runs the JOSM-version specified in the dependency configuration above.
+ * The home-directory of this JOSM is located in $buildDir/.josm, so it doesn't interfere with any other JOSM-installations.
+ */
+task runJosm(type: JavaExec) {
+  classpath = sourceSets.main.runtimeClasspath
+  main = 'JOSM'
+  //args '--offline=josm_website'
+  jvmArgs "-Djosm.home=$buildDir/.josm"
+}
+runJosm.dependsOn installPlugin
