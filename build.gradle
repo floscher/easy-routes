@@ -7,6 +7,11 @@ apply plugin: 'project-report'
 
 sourceCompatibility = '1.7'
 
+configurations {
+  packIntoJar
+  compile.extendsFrom packIntoJar
+}
+
 repositories {
   // for JUnit and JSON simple
   mavenCentral()
@@ -24,7 +29,9 @@ dependencies {
   // The JOSM-version can be specified as "latest", "tested" or the numeric version number.
   // When using a numeric version number you can leave out {changing=true}.
   compile(':josm:8904')
-  compile 'com.googlecode.json-simple:json-simple:1.1.1'
+  packIntoJar('com.googlecode.json-simple:json-simple:1.1.1') {
+    exclude module: 'junit'
+  }
 
   testCompile 'junit:junit:4.12'
 }
@@ -111,6 +118,7 @@ test {
 }
 
 jar {
+  from {configurations.packIntoJar.collect { it.isDirectory() ? it : zipTree(it) }}
   manifest {
     attributes(
       "Gradle-Version": project.getGradle().getGradleVersion(),
@@ -132,12 +140,7 @@ task activatePlugin(type: Copy) {
 
 task installPlugin(type: Copy) {
  from "$buildDir/libs/${project.name}.jar"
- from configurations.runtime
  into "$buildDir/.josm/plugins"
- include 'apache*.jar'
- include "${project.name}.jar"
- rename "${project.name}.jar", 'Mapillary.jar'
- rename 'apache-(.*)-.*.jar', 'apache-$1.jar'
 }
 installPlugin.dependsOn jar
 installPlugin.dependsOn activatePlugin
