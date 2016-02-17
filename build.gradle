@@ -28,7 +28,7 @@ repositories {
 dependencies {
   // The JOSM-version can be specified as "latest", "tested" or the numeric version number.
   // When using a numeric version number you can leave out {changing=true}.
-  compile(':josm:8904')
+  compile(':josm:9811')
   packIntoJar('com.googlecode.json-simple:json-simple:1.1.1') {
     exclude module: 'junit'
   }
