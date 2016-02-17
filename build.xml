@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<project name="easy-routes" default="dist" basedir=".">
-  <!-- edit the properties of this plugin in the file `gradle.properties` -->
-  <property file="${basedir}/gradle.properties"/>
-  <import file="../build-common.xml"/>
-</project>
