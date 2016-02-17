@@ -249,10 +249,8 @@ public class RoutingSpecial implements DataSetListener  {
 			// (Way)getCurrentDataSet().getPrimitiveById(e1.getKey(),
 			// OsmPrimitiveType.WAY);
 			if (akt != null) {
-				List<Node> ll = new ArrayList(Arrays.asList(e1.getValue()
-						.toArray()));
-				List<List<Node>> chunks = SplitWayAction.buildSplitChunks(akt,
-						ll);
+				List<Node> ll = new ArrayList<>(Arrays.asList(e1.getValue().toArray(new Node[e1.getValue().size()])));
+				List<List<Node>> chunks = SplitWayAction.buildSplitChunks(akt, ll);
 				System.out.println("CHUNKS\n"+chunks+"\n LL \n"+ll);
 				if (e1.getValue().size() > 0 && chunks!=null) {
 					SplitWayResult sp = SplitWayAction.splitWay(
@@ -263,7 +261,7 @@ public class RoutingSpecial implements DataSetListener  {
 			}
 		}
 	}
-	
+
 	private int isReversed(Way w, Node n1, Node n2) {
 		List <Node> xd=w.getNodes();
 		for(int i=0; i<xd.size()-1; i++) {
@@ -274,7 +272,7 @@ public class RoutingSpecial implements DataSetListener  {
 		}
 		return 0;
 	}
-	
+
 	private void addForBackStatus(Way w, Node n1, Node n2, Set<Way> nor, Set<Way> bac) {
 		int wynik = isReversed(w,n1,n2);
 		if(wynik<1)
@@ -282,7 +280,7 @@ public class RoutingSpecial implements DataSetListener  {
 		if(wynik>-1)
 			nor.add(w);
 	}
-	
+
 	public List<Way> getWaysAfterSplit(List<Node> middleNodes, List<String> forwardBackward)
 			throws NodeConnectException {
 		connections = new HashMap<Pair<Node, Node>, Way>();
@@ -332,12 +330,12 @@ public class RoutingSpecial implements DataSetListener  {
 		}
 		return wynik;
 	}
-	
+
 	public List<Way> getWaysAfterSplit(List<Node> middleNodes) throws NodeConnectException {
 		List <String> fb = null;
 		return getWaysAfterSplit(middleNodes, fb);
 	}
-	
+
 	private List <WaySplitterDataListener> listeners = new ArrayList<>();
 	public void registerListener(WaySplitterDataListener lis) {
 		listeners.add(lis);
@@ -350,14 +348,14 @@ public class RoutingSpecial implements DataSetListener  {
 			lis.onWaySplitterDataChange();
 		}
 	}
-	
+
 	public void changeDelay() {
 		final RoutingSpecial ws = this;
 		/*
 		if(changed)
 			return;
 		ws.changed=true;
-		new java.util.Timer().schedule( 
+		new java.util.Timer().schedule(
 		        new java.util.TimerTask() {
 		            @Override
 		            public void run() {
@@ -367,9 +365,9 @@ public class RoutingSpecial implements DataSetListener  {
 		            }
 		        }, 500);*/
 	}
-	
 
-	
+
+
 	@Override
 	public void primitivesAdded(PrimitivesAddedEvent event) {
 		if(listeners.size()==0)
@@ -391,7 +389,7 @@ public class RoutingSpecial implements DataSetListener  {
 		List<? extends OsmPrimitive> foo = event.getPrimitives();
 		boolean ok =false;
 		for(OsmPrimitive x : foo) {
-			
+
 			if(x.getDisplayType()!=OsmPrimitiveType.RELATION && x.getDisplayType()!=OsmPrimitiveType.MULTIPOLYGON)
 				ok = true;
 		}
@@ -420,7 +418,7 @@ public class RoutingSpecial implements DataSetListener  {
 		Collection<? extends OsmPrimitive> foo = event.getPrimitives();
 		boolean ok =false;
 		for(OsmPrimitive x : foo) {
-			
+
 			if(x.getDisplayType()!=OsmPrimitiveType.RELATION && x.getDisplayType()!=OsmPrimitiveType.MULTIPOLYGON)
 				ok = true;
 		}

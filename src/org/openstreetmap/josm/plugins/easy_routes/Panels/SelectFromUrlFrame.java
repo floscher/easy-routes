@@ -29,14 +29,14 @@ import org.json.simple.parser.ParseException;
 import org.openstreetmap.josm.Main;
 
 public class SelectFromUrlFrame extends JFrame {
-	
+
 	public static void getCities(List<String> server, List<String> city) {
 		Collection<Collection<String> > servers = Main.pref.getArray("easy-routes.server");
 		for(Collection<String> foo : servers) {
-			Iterator it1=foo.iterator();
+			Iterator<String> it1=foo.iterator();
 			if(foo.size()>0)
 			{
-				String serverName = (String) it1.next();
+				String serverName = it1.next();
 				System.out.println(serverName);
 				String wynik=downUrl(serverName+"List.json");
 				JSONParser parser = new JSONParser();
@@ -60,7 +60,7 @@ public class SelectFromUrlFrame extends JFrame {
 	JPanel pan = new JPanel();
 	SelectFromUrlFrame(SelectFileOrUrlPanel parentPanel) {
 		 super("Wybierz plik z serwera");
-			
+
 			this.parentPanel=parentPanel;
 		 setVisible(true);
 		 setSize(300, 220);
@@ -73,7 +73,7 @@ public class SelectFromUrlFrame extends JFrame {
 		String[] l3 = new String[l1.size()];
 		for(int i=0; i<l1.size(); i++)
 			l3[i]=l1.get(i)+" "+l2.get(i);
-		JComboBox foox = new JComboBox(l3);
+		JComboBox<String> foox = new JComboBox<>(l3);
 		foox.setMaximumSize(new Dimension(2000, 50));
 		final SelectFromUrlFrame hand = this;
 		foox.addActionListener(new ActionListener() {
@@ -81,7 +81,7 @@ public class SelectFromUrlFrame extends JFrame {
 				public void actionPerformed(ActionEvent ae){
 					JComboBox cb = (JComboBox)ae.getSource();
 					int pos=cb.getSelectedIndex();
-					
+
 					 String wynik=downUrl(l1.get(pos)+"List"+l2.get(pos)+".json");
 					 hand.foo(wynik, l1.get(pos), l2.get(pos));
 				}});
@@ -89,13 +89,13 @@ public class SelectFromUrlFrame extends JFrame {
 		foox.setSelectedIndex(0);
 	}
 	JButton butOk;
-	JList lista;
+	JList<String> lista;
 	SelectFileOrUrlPanel parentPanel;
 	void foo(String tab, final String server, final String city) {
-		
+
 		JSONParser parser = new JSONParser();
 		Object obj;
-		
+
 		try {
 			obj = parser.parse(tab);
 			JSONArray array = (JSONArray) obj;
@@ -111,15 +111,15 @@ public class SelectFromUrlFrame extends JFrame {
 			pan.remove(listScroller);
 		if(butOk!=null)
 			pan.remove(butOk);
-		lista = new JList(wybor);
+		lista = new JList<>(wybor);
 		lista.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		listScroller = new JScrollPane(lista);
 		listScroller.setPreferredSize(new Dimension(400, 70));
 		lista.setLayoutOrientation(JList.VERTICAL);
 		pan.add(listScroller);
 		ListSelectionModel listSelectionModel = lista.getSelectionModel();
-	        
-	        
+
+
 			butOk = new JButton("OK");
 			pan.add(butOk);
 			final SelectFromUrlFrame fr = this;
@@ -130,7 +130,7 @@ public class SelectFromUrlFrame extends JFrame {
 					fr.endx(server, city);
 
 			       }
-				
+
 			});
 	}
 	static String convertStreamToString(java.io.InputStream is) {
@@ -146,7 +146,7 @@ public class SelectFromUrlFrame extends JFrame {
 		URLConnection connection;
 		try {
 			connection = new URL(url).openConnection();
-		
+
 		connection.setRequestProperty("Accept-Charset", charset);
 		InputStream response = connection.getInputStream();
 		return convertStreamToString(response);

@@ -25,7 +25,7 @@ import org.openstreetmap.josm.plugins.easy_routes.Panels.SamPrzystanekPanel;
 import org.openstreetmap.josm.plugins.easy_routes.Panels.SelectFromUrlFrame;
 
 public class PrzystankiAction extends JosmAction {
-	
+
 	public static LatLon getLatLon(JSONObject obj, String keyLat, String keyLon)
 	{
 		double lat = 0;
@@ -33,12 +33,12 @@ public class PrzystankiAction extends JosmAction {
 		if(obj.get(keyLat) != null)
 			lat = (Double) obj.get(keyLat);
 		if(obj.get(keyLon) != null)
-			lon = (Double) obj.get(keyLon);		
+			lon = (Double) obj.get(keyLon);
 		if(lat>1 && lon>1)
 			return new LatLon(lat, lon);
 		return null;
 	}
-	
+
 	public static LatLon getAvgLatLon(LatLon l1, LatLon l2)
 	{
 		if(l1 == null && l2 == null)
@@ -49,7 +49,7 @@ public class PrzystankiAction extends JosmAction {
 			return l1;
 		return new LatLon((l1.lat()+l2.lat())/2, (l1.lon()+l2.lon())/2);
 	}
-	
+
 	public static String getLatLonShortInfo(JSONObject obj)
 	{
 		LatLon ll1 = getLatLon(obj, "lat", "lon");
@@ -61,7 +61,7 @@ public class PrzystankiAction extends JosmAction {
 			latlon_jakosc = (Long) obj.get("latlon_jakosc");
 		return ok1+ok2+"/"+latlon_jakosc;
 	}
-	
+
 	JFrame frame;
 	JPanel pan = new JPanel();
 	JPanel pan2;
@@ -85,14 +85,14 @@ public class PrzystankiAction extends JosmAction {
 		String[] l3 = new String[l1.size()];
 		for(int i=0; i<l1.size(); i++)
 			l3[i]=l1.get(i)+" "+l2.get(i);
-		 JComboBox foox = new JComboBox(l3);
+		 JComboBox<String> foox = new JComboBox<>(l3);
 		 final PrzystankiAction hand = this;
 			foox.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent ae){
 					JComboBox cb = (JComboBox)ae.getSource();
 					int pos=cb.getSelectedIndex();
-					
+
 					 dupa(SelectFromUrlFrame.downUrl(l1.get(pos)+"PrzystankiErr"+l2.get(pos)+".json"));
 				}});
 			pan.setLayout(new BoxLayout(pan, BoxLayout.PAGE_AXIS));
@@ -109,7 +109,7 @@ public class PrzystankiAction extends JosmAction {
 		pan.add(pan2);
 		JSONParser parser = new JSONParser();
 		Object obj;
-		
+
 		try {
 			obj = parser.parse(tab);
 			final JSONArray array = (JSONArray) obj;
@@ -119,7 +119,7 @@ public class PrzystankiAction extends JosmAction {
 				String foo = (String)obb.get("long_name");
 				l5[i] = foo + " " + getLatLonShortInfo(obb);
 			}
-			JComboBox foo9 = new JComboBox(l5);
+			JComboBox<String> foo9 = new JComboBox<>(l5);
 			final PrzystankiAction hand = this;
 			foo9.addActionListener(new ActionListener() {
 				@Override

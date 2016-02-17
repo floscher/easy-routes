@@ -47,7 +47,7 @@ MapView mv;
     	System.out.println(x.x+" "+x.y);
     	DataSet ds = Main.main.getCurrentDataSet();
     	Node n = new Node(ll);
-    	Map<String, String> keys = new HashMap();
+    	Map<String, String> keys = new HashMap<>();
     	keys.put("highway", "bus_stop");
     	n.setKeys(keys);
     	ds.addPrimitive(n);

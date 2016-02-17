@@ -28,7 +28,7 @@ public class DiffLayer extends Layer {
 		super("DIFF LAYER");
 		this.techLayers=techLayers;
 	}
-	
+
 	private void drawLine(Graphics2D g, Node a, Node b) {
 		List <Node> tmpNodes = new ArrayList<>();
 		tmpNodes.add(a);
@@ -41,7 +41,7 @@ public class DiffLayer extends Layer {
 			g.draw(new Line2D.Double(pa, pb));
 		}
 	}
-	
+
 	@Override
 	public void paint(Graphics2D g, MapView mv, Bounds box) {
 		for(DiffLayerTech tl : techLayers)
@@ -85,7 +85,7 @@ public class DiffLayer extends Layer {
 	@Override
 	public void mergeFrom(Layer from) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -97,7 +97,7 @@ public class DiffLayer extends Layer {
 	@Override
 	public void visitBoundingBox(BoundingXYVisitor v) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
