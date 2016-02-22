@@ -28,7 +28,7 @@ repositories {
 dependencies {
   // The JOSM-version can be specified as "latest", "tested" or the numeric version number.
   // When using a numeric version number you can leave out {changing=true}.
-  compile(':josm:9811')
+  compile(':josm:9850')
   packIntoJar('com.googlecode.json-simple:json-simple:1.1.1') {
     exclude module: 'junit'
   }
@@ -133,9 +133,11 @@ jar {
 }
 
 task activatePlugin(type: Copy) {
-  from "gradle/josm-preferences.xml"
-  into "$buildDir/.josm"
-  rename 'josm-preferences.xml', 'preferences.xml'
+  if (!new File("$buildDir/.josm/preferences.xml").exists()) {
+    from "gradle/josm-preferences.xml"
+    into "$buildDir/.josm"
+    rename 'josm-preferences.xml', 'preferences.xml'
+  }
 }
 
 task installPlugin(type: Copy) {

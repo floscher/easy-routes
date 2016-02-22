@@ -3,4 +3,5 @@
   <list key='plugins'>
     <entry value='easy-routes'/>
   </list>
+  <tag key='pluginmanager.version' value='999999'/>
 </preferences>
